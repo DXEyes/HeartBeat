@@ -24,7 +24,11 @@ public class Patient {
         heartFrame=7;
     }
     public void update(){
+        boolean beat=heartFrame==0;
         heartFrame=game.beat.getBeat()%8;
+        if(!beat && heartFrame==0){
+            game.heartbeat.play();
+        }
     }
     public void render(){
         game.drawSprite(body, 0,0,0);

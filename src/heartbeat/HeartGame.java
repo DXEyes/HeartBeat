@@ -21,8 +21,9 @@ import java.util.logging.Logger;
 public class HeartGame extends GameLoop{
     Sprite body, heart;
     BeatController beat;
-    Sound music;
+    Sound music, heartbeat;
     Patient p;
+    Stethoscope scope;
     public HeartGame(){
         super(320,180);
     }
@@ -33,9 +34,10 @@ public class HeartGame extends GameLoop{
             body=new Sprite("patient_temp.png",-1);
             heart=new Sprite("heartbeat_strip8.png",-1);
             music=new Sound("Purple I.wav");
+            heartbeat=new Sound("normal_01.wav");
             beat=new BeatController(music, 125./2);
             p=new Patient(this,1);
-            
+            scope=new Stethoscope(this);
             beat.start();
         } catch (IOException ex) {
             Logger.getLogger(HeartGame.class.getName()).log(Level.SEVERE, null, ex);
@@ -45,11 +47,13 @@ public class HeartGame extends GameLoop{
     @Override
     public void Update() {
         p.update();
+        scope.update();
     }
 
     @Override
     public void Render() {
         p.render();
+        scope.render();
     }
 
     @Override
