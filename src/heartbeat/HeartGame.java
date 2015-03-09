@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  * @author pcowal15
  */
 public class HeartGame extends GameLoop{
-    Sprite body, heart;
+    Sprite body, heart, font;
     BeatController beat;
     Sound music, heartbeat;
     Patient p;
@@ -33,8 +33,9 @@ public class HeartGame extends GameLoop{
     @Override
     public void Initialize() {
         try {
-            body=new Sprite("patient_temp.png",-1);
+            body=new Sprite("patient_hitbox_temp.png",-1);
             heart=new Sprite("heartbeat_strip8.png",-1);
+            font=new Sprite("12x8test2t_strip96.png",-1);
             music=new Sound("Purple I.wav");
             heartbeat=new Sound("normal_01.wav");
             beat=new BeatController(music, 125./2);
@@ -58,6 +59,7 @@ public class HeartGame extends GameLoop{
     public void Render() {
         p.render();
         scope.render();
+        this.drawText("Hello World!", font, 100, 20);
     }
 
     @Override
