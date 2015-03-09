@@ -24,6 +24,8 @@ public class HeartGame extends GameLoop{
     Sound music, heartbeat;
     Patient p;
     Stethoscope scope;
+    boolean dragging;
+    
     public HeartGame(){
         super(320,180);
     }
@@ -39,6 +41,8 @@ public class HeartGame extends GameLoop{
             p=new Patient(this,1);
             scope=new Stethoscope(this);
             beat.start();
+            dragging=false;
+            
         } catch (IOException ex) {
             Logger.getLogger(HeartGame.class.getName()).log(Level.SEVERE, null, ex);
         }
