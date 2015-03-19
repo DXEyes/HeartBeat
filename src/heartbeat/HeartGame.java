@@ -24,8 +24,9 @@ public class HeartGame extends GameLoop{
     Sound music, heartbeat;
     Patient p;
     Stethoscope scope;
-    boolean dragging;
-    
+    boolean dragging, canClick, click;
+    int prevFPS;
+    Cable c;
     public HeartGame(){
         super(320,180);
     }
@@ -43,6 +44,8 @@ public class HeartGame extends GameLoop{
             scope=new Stethoscope(this);
             beat.start();
             dragging=false;
+            c=new Cable(this,310,120,200);
+            c.setStart(310, 120, 0);
             
         } catch (IOException ex) {
             Logger.getLogger(HeartGame.class.getName()).log(Level.SEVERE, null, ex);
@@ -51,17 +54,58 @@ public class HeartGame extends GameLoop{
 
     @Override
     public void Update() {
+        if(prevFPS!=fps){
+            prevFPS=fps;
+            System.out.println("FPS: "+fps);
+        }
+        if(canClick){
+            if(mbPressed[MouseEvent.BUTTON1]){
+                click=true;
+                canClick=false;
+            }
+        }
+        else{
+            click=false;
+            if(!mbPressed[MouseEvent.BUTTON1]){
+                canClick=true;
+            }
+        }
         p.update();
         scope.update();
+        c.update();
+        c.setEnd(mouseX, mouseY, 0);
+        
     }
 
     @Override
     public void Render() {
         p.render();
         scope.render();
-        this.drawText("Hello World!", font, 100, 20);
+        c.render();
+        //this.drawText("Hello World!", font, 100, 20);
+        //this.drawText("The quick brown fox", font, 100, 80);
     }
-
+    
+    public void blur(int amt){
+        if(amt>127){
+            for(int i=0; i<screen.length-1; ++i){
+                screen[i]=blendColor(screen[i+1],screen[i],127);
+            }
+            for(int i=screen.length-1; i>0; --i){
+                screen[i]=blendColor(screen[i-1],screen[i],127);
+            }
+            blur(amt-127);
+        }
+        else{
+            for(int i=0; i<screen.length-1; ++i){
+                screen[i]=blendColor(screen[i+1],screen[i],amt);
+            }
+            for(int i=screen.length-1; i>0; --i){
+                screen[i]=blendColor(screen[i-1],screen[i],amt);
+            }
+        }
+    }
+    
     @Override
     public void mouseClicked(MouseEvent me) {
         

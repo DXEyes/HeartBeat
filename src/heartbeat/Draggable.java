@@ -34,25 +34,25 @@ public abstract class Draggable {
     }
     
     public void update(){
-        double dragSpeed=.1;
+        double dragSpeed=.5;
         if(!active){
             x+=(xStart-x)*dragSpeed;
             y+=(yStart-y)*dragSpeed;
             
-            if(game.mbPressed[MouseEvent.BUTTON1]&&!game.dragging
+            if(game.click&&!game.dragging
                     &&game.mouseX>x-w&&game.mouseX<x+w
                     &&game.mouseY>y-h&&game.mouseY<y+h){
                 active=true;
                 game.dragging=true;
-                xOffset=game.mouseX-xStart;
-                yOffset=game.mouseY-yStart;
+                //xOffset=game.mouseX-xStart;
+                //yOffset=game.mouseY-yStart;
             }
         }
         else{
             x+=(game.mouseX-xOffset-x)*dragSpeed;
             y+=(game.mouseY-yOffset-y)*dragSpeed;
             
-            if(!game.mbPressed[MouseEvent.BUTTON1]){
+            if(game.click){
                 active=false;
                 game.dragging=false;
                 Use();

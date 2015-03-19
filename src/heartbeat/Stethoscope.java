@@ -23,7 +23,7 @@ public class Stethoscope extends Draggable{
     @Override
     public void Render(){
         //game.drawRectangle((int)x-4, (int)y-4, (int)x+4, (int)y+4, 0xff808080, false);
-        game.drawLine((int)x, (int)y, 320, 180, 0x99000000);
+        //game.drawLine((int)x, (int)y, 320, 180, 0x99000000);
     }
 
     @Override

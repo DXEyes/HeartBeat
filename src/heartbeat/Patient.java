@@ -59,7 +59,7 @@ public class Patient {
             s="Defib";
             break;
         }
-        game.drawText(Integer.toHexString(c)+": "+s, game.font, 100, 40);
+        //game.drawText(Integer.toHexString(c)+": "+s, game.font, 100, 40);
         
     }
     public static final int BODY_HITBOX=0xFF000000;

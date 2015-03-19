@@ -17,7 +17,7 @@ public class HeartBeat {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        new GameFrame(new HeartGame(),"HeartBeat v0.0",6000).Run();
+        new GameFrame(new HeartGame(),"HeartBeat v0.0",60).Run();
     }
     
 }
