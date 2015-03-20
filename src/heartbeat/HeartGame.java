@@ -44,8 +44,6 @@ public class HeartGame extends GameLoop{
             scope=new Stethoscope(this);
             beat.start();
             dragging=false;
-            c=new Cable(this,310,120,200);
-            c.setStart(310, 120, 0);
             
         } catch (IOException ex) {
             Logger.getLogger(HeartGame.class.getName()).log(Level.SEVERE, null, ex);
@@ -72,8 +70,6 @@ public class HeartGame extends GameLoop{
         }
         p.update();
         scope.update();
-        c.update();
-        c.setEnd(mouseX, mouseY, 0);
         
     }
 
@@ -81,7 +77,6 @@ public class HeartGame extends GameLoop{
     public void Render() {
         p.render();
         scope.render();
-        c.render();
         //this.drawText("Hello World!", font, 100, 20);
         //this.drawText("The quick brown fox", font, 100, 80);
     }

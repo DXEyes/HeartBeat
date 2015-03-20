@@ -5,46 +5,54 @@
  */
 package heartbeat;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author pcowal15
  */
 public class Cable {
     HeartGame game;
-    CablePoint[] points;
+    ArrayList<CablePoint> points;
+    CablePoint start, end1, end2;
     int width, color;
     public Cable(HeartGame game, double x, double y, double length){
         this.game=game;
-        points=new CablePoint[20];
+        points=new ArrayList<CablePoint>();
         for(int i=0; i<20; ++i){
-            points[i]=new CablePoint(x,y,0,length/20);
+            CablePoint p=new CablePoint(x,y,0,length/20);
+            if(i>0)p.attach(points.get(i-1));
+            points.add(p);
+            
         }
+        start=points.get(0);
+        end1=points.get(19);
         color=0xFFFF0000;
     }
     public void setStart(double x, double y, double z){
-        points[0].x=x;
-        points[0].y=y;
-        points[0].z=z;
-        points[0].fix(true);
+        start.x=x;
+        start.y=y;
+        start.z=z;
+        start.fix(true);
     }
     public void setEnd(double x, double y, double z){
-        points[19].x=x;
-        points[19].y=y;
-        points[19].z=z;
-        points[19].fix(true);
+        end1.x=x;
+        end1.y=y;
+        end1.z=z;
+        end1.fix(true);
     }
-    public void update(){
-        for(int n=0; n<20; ++n){
-            for(int i=0; i<20; ++i){
-
-                if(i<19)points[i].handleCable(points[i+1]);
-                points[i].update();
+    public void update(int steps){
+        for(int n=0; n<steps; ++n){
+            for(CablePoint p:points){
+                p.update();
             }
         }
     }
     public void render(){
-        for(int i=0; i<19; ++i){
-            game.drawLine((int)points[i].x, (int)(points[i].y+points[i].z/10), (int)points[i+1].x, (int)(points[i+1].y+points[i+1].z/10), color);
+        for(CablePoint p : points){
+            for(CablePoint p2 : p.attachedPoints){
+                game.drawLine((int)p.x, (int)(p.y+p.z/5), (int)p2.x, (int)(p2.y+p2.z/5), color);
+            }
         }
     }
 }
@@ -53,16 +61,21 @@ class CablePoint{
     double xv, yv, zv;
     double grav, res, sp;
     boolean fixed;
+    ArrayList<CablePoint> attachedPoints;
     public CablePoint(double x, double y, double z, double l){
         this.x=x;
         this.y=y;
         this.z=z;
         this.l=l;
         xv=yv=zv=0;
-        grav=.1;
-        res=.01;
-        sp=.01;
+        grav=.2;
+        res=.05;
+        sp=.1;
         fixed=false;
+        attachedPoints=new ArrayList<CablePoint>();
+    }
+    public void attach(CablePoint p){
+        attachedPoints.add(p);
     }
     public void fix(boolean fix){
         fixed=fix;
@@ -73,17 +86,21 @@ class CablePoint{
         double dz=other.z-z;
         double dist=Math.sqrt(dx*dx+dy*dy+dz*dz);
         
-        if(dist>l){
-            xv+=sp*dx*(dist-l)/(dist+1);
-            yv+=sp*dy*(dist-l)/(dist+1);
-            zv+=sp*dz*(dist-l)/(dist+1);
+        if(dist!=l){
+            double mag=sp*(dist-l)/(dist+1);
+            xv+=dx*mag;
+            yv+=dy*mag;
+            zv+=dz*mag;
             
-            other.xv-=sp*dx*(dist-l)/(dist+1);
-            other.yv-=sp*dy*(dist-l)/(dist+1);
-            other.zv-=sp*dz*(dist-l)/(dist+1);
+            other.xv-=dx*mag;
+            other.yv-=dy*mag;
+            other.zv-=dz*mag;
         }
     }
     public void update(){
+        for(CablePoint p:attachedPoints){
+            handleCable(p);
+        }
         if(fixed)return;
         x+=xv;
         y+=yv;
