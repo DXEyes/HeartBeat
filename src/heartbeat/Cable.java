@@ -16,7 +16,7 @@ public class Cable {
     ArrayList<CablePoint> points;
     CablePoint start, end1, end2;
     int width, color;
-    public Cable(HeartGame game, double x, double y, double length){
+    public Cable(HeartGame game, double x, double y, double length, int color){
         this.game=game;
         points=new ArrayList<CablePoint>();
         for(int i=0; i<20; ++i){
@@ -27,7 +27,27 @@ public class Cable {
         }
         start=points.get(0);
         end1=points.get(19);
-        color=0xFFFF0000;
+        this.color=color;
+    }
+    public Cable(HeartGame game, double x, double y, double length, int split, int color){
+        this.game=game;
+        points=new ArrayList<CablePoint>();
+        for(int i=0; i<20; ++i){
+            CablePoint p=new CablePoint(x,y,0,length/20);
+            if(i>0)p.attach(points.get(i-1));
+            points.add(p);
+            
+        }
+        for(int i=split; i<20; ++i){
+            CablePoint p=new CablePoint(x,y,0,length/20);
+            if(i>split)p.attach(points.get(points.size()-1));
+            else p.attach(points.get(split));
+            points.add(p);
+        }
+        start=points.get(0);
+        end1=points.get(19);
+        end2=points.get(points.size()-1);
+        this.color=color;
     }
     public void setStart(double x, double y, double z){
         start.x=x;
@@ -41,6 +61,12 @@ public class Cable {
         end1.z=z;
         end1.fix(true);
     }
+    public void setEnd2(double x, double y, double z){
+        end2.x=x;
+        end2.y=y;
+        end2.z=z;
+        end2.fix(true);
+    }
     public void update(int steps){
         for(int n=0; n<steps; ++n){
             for(CablePoint p:points){
@@ -49,9 +75,15 @@ public class Cable {
         }
     }
     public void render(){
+        double w=game.width/2;
+        double h=game.height/2;
+        double sf=1000;
+        
         for(CablePoint p : points){
             for(CablePoint p2 : p.attachedPoints){
-                game.drawLine((int)p.x, (int)(p.y+p.z/5), (int)p2.x, (int)(p2.y+p2.z/5), color);
+                double p1z=sf/(sf+p.z);
+                double p2z=sf/(sf+p2.z);
+                game.drawLine((int)((p.x-w)*p1z+w), (int)((p.y-h)*p1z+h), (int)((p2.x-w)*p2z+w), (int)((p2.y-h)*p2z+h), color);
             }
         }
     }
@@ -69,7 +101,7 @@ class CablePoint{
         this.l=l;
         xv=yv=zv=0;
         grav=.2;
-        res=.05;
+        res=.04;
         sp=.1;
         fixed=false;
         attachedPoints=new ArrayList<CablePoint>();
