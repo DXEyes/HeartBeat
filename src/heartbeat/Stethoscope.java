@@ -12,12 +12,13 @@ package heartbeat;
 public class Stethoscope extends Draggable{
     Cable cable;
     public Stethoscope(HeartGame game){
-        super(game,game.heart,300,150);
+        super(game,game.heart,160,150);
         cable=new Cable(game, x, y, 200, 10, 0xFF303030);
         cable.setEnd(220, 180, -100);
         cable.setEnd2(100, 180, -100);
         cable.setStart(x, y, 0);
         cable.update(100);
+        essential=true;
     }
     @Override
     public void Update(){

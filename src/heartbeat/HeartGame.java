@@ -19,9 +19,10 @@ import java.util.logging.Logger;
  * @author pcowal15
  */
 public class HeartGame extends GameLoop{
-    Sprite body, heart, font;
+    Sprite body, heart, font, syringe;
     BeatController beat;
     Sound music, heartbeat;
+    Button b;
     Patient p;
     Stethoscope scope;
     boolean dragging, canClick, click;
@@ -37,9 +38,11 @@ public class HeartGame extends GameLoop{
             body=new Sprite("patient_hitbox_temp.png",-1);
             heart=new Sprite("heartbeat_strip8.png",-1);
             font=new Sprite("12x8test2t_strip96.png",-1);
-            music=new Sound("Purple I.wav");
+            syringe=new Sprite("syringe.png",-1);
+            music=new Sound("heartbeat soundtrack/particles_70.wav");
             heartbeat=new Sound("normal_01.wav");
-            beat=new BeatController(music, 125./2);
+            beat=new BeatController(music, 70.);
+            b=new Button(this, "Testing!", 200,10,100,18);
             p=new Patient(this,1);
             scope=new Stethoscope(this);
             beat.start();
@@ -77,6 +80,7 @@ public class HeartGame extends GameLoop{
     public void Render() {
         p.render();
         scope.render();
+        b.render();
         //this.drawText("Hello World!", font, 100, 20);
         //this.drawText("The quick brown fox", font, 100, 80);
     }
