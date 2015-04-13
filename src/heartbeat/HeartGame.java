@@ -11,6 +11,8 @@ import gamebase.Sprite;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,9 +24,10 @@ public class HeartGame extends GameLoop{
     Sprite body, heart, font, syringe;
     BeatController beat;
     Sound music, heartbeat;
-    Button b;
+    ArrayList<Button> buttons;
     Patient p;
-    Stethoscope scope;
+    ArrayList<Draggable> items;
+    ArrayList<Feedback> feedback;
     boolean dragging, canClick, click;
     int prevFPS;
     Cable c;
@@ -35,6 +38,10 @@ public class HeartGame extends GameLoop{
     @Override
     public void Initialize() {
         try {
+            items=new ArrayList<Draggable>();
+            buttons=new ArrayList<Button>();
+            feedback=new ArrayList<Feedback>();
+            
             body=new Sprite("patient_hitbox_temp.png",-1);
             heart=new Sprite("heartbeat_strip8.png",-1);
             font=new Sprite("12x8test2t_strip96.png",-1);
@@ -42,11 +49,16 @@ public class HeartGame extends GameLoop{
             music=new Sound("heartbeat soundtrack/particles_70.wav");
             heartbeat=new Sound("normal_01.wav");
             beat=new BeatController(music, 70.);
-            b=new Button(this, "Testing!", 200,10,100,18);
+            
+            buttons.add(new Button(this, "Testing!", 200,10,100,18, 1));
+            items.add(new TachySyringe(this,200,200));
             p=new Patient(this,1);
-            scope=new Stethoscope(this);
+            
+            items.add(new Stethoscope(this));
+
             beat.start();
             dragging=false;
+            
             
         } catch (IOException ex) {
             Logger.getLogger(HeartGame.class.getName()).log(Level.SEVERE, null, ex);
@@ -72,17 +84,30 @@ public class HeartGame extends GameLoop{
             }
         }
         p.update();
-        scope.update();
+        for(Draggable d:items){
+            d.update();
+        }
         
     }
 
     @Override
     public void Render() {
         p.render();
-        scope.render();
-        b.render();
+        for(Draggable d:items){
+            d.render();
+        }
+        for(Button b:buttons){
+            b.render();
+        }
+        ListIterator l=feedback.listIterator();
+        while(l.hasNext()){
+            Feedback f=(Feedback)l.next();
+            f.render();
+            if(f.life<=0)l.remove();
+        }
         //this.drawText("Hello World!", font, 100, 20);
         //this.drawText("The quick brown fox", font, 100, 80);
+        
     }
     
     public void blur(int amt){

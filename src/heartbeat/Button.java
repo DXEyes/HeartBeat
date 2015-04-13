@@ -14,36 +14,30 @@ import java.awt.event.MouseEvent;
 public class Button {
     HeartGame game;
     int x1, y1, x2, y2;
-    int color, colorHover, colorClicked, colorBorder;
+    int color, colorHover, colorClicked, colorBorder, id;
     String text;
-    boolean canClick;
-    public Button(HeartGame game, String text, int x1, int y1, int w, int h){
+    public Button(HeartGame game, String text, int x1, int y1, int w, int h, int id){
         this.game=game;
         this.text=text;
         this.x1=x1;
         this.y1=y1;
         this.x2=x1+w;
         this.y2=y1+20;
+        this.id=id;
         color=0x80C0C0C0;
         colorHover=0x80808080;
         colorClicked=0x80404040;
         colorBorder=0xFF202020;
-        canClick=true;
     }
     public boolean clicked(){
         if(game.mbPressed[MouseEvent.BUTTON1]){
-            if(hover()&&canClick){
-                canClick=false;
+            if(hover()&&game.click){
                 return true;
             }
-            canClick=false;
         }
         return false;
     }
     public boolean hover(){
-        if(!game.mbPressed[MouseEvent.BUTTON1]){
-            canClick=true;
-        }
         return (game.mouseX>x1 && game.mouseX<x2 && game.mouseY>y1 && game.mouseY<y2);
         
     }

@@ -16,7 +16,7 @@ public abstract class Draggable {
     HeartGame game;
     Sprite spr;
     int subimg;
-    int useTimer, retTimer;
+    int useTimer;
     int xStart, yStart, xOffset, yOffset, w, h;
     double x, y, dx, dy;
     boolean active, essential;
@@ -32,7 +32,7 @@ public abstract class Draggable {
         this.xStart=xStart;
         this.yStart=yStart;
         active=false;
-        essential=false;
+        essential=true;
         subimg=0;
     }
     
@@ -41,13 +41,15 @@ public abstract class Draggable {
         if(useTimer>0)useTimer--;
         else if(!active){
             if(essential){
-                if(retTimer>300){
-                    x+=(xStart-x)*dragSpeed;
-                    y+=(yStart-y)*dragSpeed;
-                }
-                else{
-                    retTimer++;
-                }
+                double r1=0.8;
+                double r2=2;
+                if(x<0)dx=dx*r1+r2;
+                if(x>game.width)dx=dx*r1-r2;
+                if(y<0)dy=dy*r1+r2;
+                if(y>game.height)dy=dy*r1-r2;
+                
+                //dx*=0.5;
+                //dy*=0.5;
             }
             double s=Math.sqrt(dx*dx+dy*dy);
             double friction=.5;
@@ -71,7 +73,6 @@ public abstract class Draggable {
             }
         }
         else{
-            retTimer=0;
             dx=(game.mouseX-xOffset-x)*dragSpeed;
             dy=(game.mouseY-yOffset-y)*dragSpeed;
             x+=dx;
