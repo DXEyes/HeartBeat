@@ -42,7 +42,7 @@ public class HeartGame extends GameLoop{
             buttons=new ArrayList<Button>();
             feedback=new ArrayList<Feedback>();
             
-            body=new Sprite("patient_hitbox_temp.png",-1);
+            body=new Sprite("hitbox.png",-1);
             heart=new Sprite("heartbeat_strip8.png",-1);
             font=new Sprite("12x8test2t_strip96.png",-1);
             syringe=new Sprite("syringe.png",-1);
@@ -50,9 +50,9 @@ public class HeartGame extends GameLoop{
             heartbeat=new Sound("normal_01.wav");
             beat=new BeatController(music, 70.);
             
-            buttons.add(new Button(this, "Testing!", 200,10,100,18, 1));
-            items.add(new TachySyringe(this,200,200));
-            p=new Patient(this,1);
+            buttons.add(new Button(this, "Tach.", 200,10,100,18, 1));
+            items.add(new TachySyringe(this));
+            p=new Patient(this,1,false);
             
             items.add(new Stethoscope(this));
 
@@ -86,6 +86,14 @@ public class HeartGame extends GameLoop{
         p.update();
         for(Draggable d:items){
             d.update();
+        }
+        for(Button b:buttons){
+            if(b.clicked()){
+                switch(b.id){
+                    case 1:
+                        items.add(new TachySyringe(this));
+                }
+            }
         }
         
     }

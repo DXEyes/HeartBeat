@@ -11,8 +11,8 @@ package heartbeat;
  */
 public class TachySyringe extends Draggable{
     boolean filled;
-    public TachySyringe(HeartGame g, int x, int y){
-        super(g, g.syringe, x, y);
+    public TachySyringe(HeartGame g){
+        super(g, g.syringe, 350+(int)(Math.random()*50), 5+(int)(Math.random()*50));
         filled=true;
     }
     @Override

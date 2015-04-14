@@ -22,7 +22,7 @@ public class Stethoscope extends Draggable{
     }
     @Override
     public void Update(){
-        double distsq=(x-60)*(x-60)+(y-60)*(y-60);
+        double distsq=(x-55)*(x-55)+(y-65)*(y-65);
         game.beat.song.setCutoff((float)Math.min(1, (distsq)*0.0005+0.1));
         game.heartbeat.setVolume((float)Math.max(0, 1-(distsq)*0.0005));
         cable.setStart(x, y, 0);

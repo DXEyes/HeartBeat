@@ -15,17 +15,42 @@ public class Patient {
     HeartGame game;
     int heartFrame;
     double heartRate;
+    
+    double temp;
+    int heartStatus, statusCounter;
+    
+    boolean arrhythmia;
+    public static final int STATUS_NORMAL=0;
+    public static final int STATUS_TACHYCARDIA=1;
+    public static final int STATUS_BRADYCARDIA=-1;
+    public static final int STATUS_STOPPED=2;
+    
     Sprite heart, body;
-    public Patient(HeartGame game, double heartRate){
+    public Patient(HeartGame game, int heartStatus, boolean arrhythmia){
+        
         this.game=game;
         heart=game.heart;
         body=game.body;
-        this.heartRate=heartRate;
+        this.heartStatus=heartStatus;
+        statusCounter=0;
+        temp=98;
         heartFrame=7;
     }
     public void update(){
-        boolean beat=heartFrame==0;
-        heartFrame=(int)((double)game.beat.getBeat()*heartRate)%8;
+        
+        boolean beat=(heartFrame==0);
+        
+        double tempo=1;
+        
+        if(heartStatus==STATUS_TACHYCARDIA || temp>98){
+            tempo=2;
+        }
+        if(heartStatus==STATUS_BRADYCARDIA){
+            tempo=0.5;
+        }
+        
+        
+        heartFrame=(int)((double)game.beat.getBeat()*1)%8;
         if(!beat && heartFrame==0){
             game.heartbeat.stop();
             game.heartbeat.play();
@@ -37,7 +62,7 @@ public class Patient {
     }
     public void render(){
         game.drawSprite(body, 0,0,0);
-        game.drawSprite(heart, heartFrame, 45, 45);
+        game.drawSprite(heart, heartFrame, 40, 50);
         
         String s="Nothing";
         int c=getHitbox(game.mouseX, game.mouseY);
