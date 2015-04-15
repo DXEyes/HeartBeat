@@ -17,7 +17,7 @@ public class Patient {
     double heartRate;
     
     double temp;
-    int heartStatus, statusCounter;
+    int heartStatus, nextStatus, statusCounter;
     
     boolean arrhythmia;
     public static final int STATUS_NORMAL=0;
@@ -25,18 +25,30 @@ public class Patient {
     public static final int STATUS_BRADYCARDIA=-1;
     public static final int STATUS_STOPPED=2;
     
+    double heartOpacity;
+    int sc;
     Sprite heart, body;
+    int x;
     public Patient(HeartGame game, int heartStatus, boolean arrhythmia){
         
         this.game=game;
         heart=game.heart;
-        body=game.body;
-        this.heartStatus=heartStatus;
+        body=game.bodyHitbox;
+        nextStatus=this.heartStatus=heartStatus;
         statusCounter=0;
         temp=98;
         heartFrame=7;
+        sc=0;
+        this.arrhythmia=arrhythmia;
     }
+    public void changeStatus(int status, int time){
+        nextStatus=status;
+        statusCounter=time;
+    }
+    
     public void update(){
+        if(statusCounter>0)statusCounter--;
+        else heartStatus=nextStatus;
         
         boolean beat=(heartFrame==0);
         
@@ -50,10 +62,28 @@ public class Patient {
         }
         
         
-        heartFrame=(int)((double)game.beat.getBeat()*1)%8;
+        heartFrame=(int)((double)game.beat.getBeat()*tempo)%8;
         if(!beat && heartFrame==0){
-            game.heartbeat.stop();
-            game.heartbeat.play();
+            sc=1;
+            if(arrhythmia){
+                sc=(int)(1+Math.random()*40/tempo);
+            }
+        }
+        if(sc>1)sc--;
+        if(sc==1){
+            sc=0;
+            if(tempo==2){
+                game.fast.stop();
+                game.fast.play();
+            }
+            else if(tempo<1){
+                game.slow.stop();
+                game.slow.play();
+            }
+            else{
+                game.normal.stop();
+                game.normal.play();
+            }
         }
     }
     public int getHitbox(int x, int y){
@@ -61,8 +91,9 @@ public class Patient {
         return 0;
     }
     public void render(){
-        game.drawSprite(body, 0,0,0);
-        game.drawSprite(heart, heartFrame, 40, 50);
+        game.drawSprite(game.table, 0, x, 0);
+        game.drawSprite(game.patient, 0,x,0);
+        game.drawSpriteFiltered(heart, heartFrame, 40, 50, (int)(heartOpacity*255), 255, 255, 255);
         
         String s="Nothing";
         int c=getHitbox(game.mouseX, game.mouseY);
@@ -84,7 +115,9 @@ public class Patient {
             s="Defib";
             break;
         }
-        //game.drawText(Integer.toHexString(c)+": "+s, game.font, 100, 40);
+        game.drawText(heartStatus+"", game.font, 100, 40);
+        game.drawText(nextStatus+"", game.font, 100, 60);
+        game.drawText(statusCounter+"", game.font, 100, 80);
         
     }
     public static final int BODY_HITBOX=0xFF000000;

@@ -24,9 +24,19 @@ public class Stethoscope extends Draggable{
     public void Update(){
         double distsq=(x-55)*(x-55)+(y-65)*(y-65);
         game.beat.song.setCutoff((float)Math.min(1, (distsq)*0.0005+0.1));
-        game.heartbeat.setVolume((float)Math.max(0, 1-(distsq)*0.0005));
+        float v=(float)Math.max(0, 1-(distsq)*0.0005);
+        
+        game.p.heartOpacity=v;
+        game.normal.setVolume(v);
+        game.fast.setVolume(v);
+        game.slow.setVolume(v);
         cable.setStart(x, y, 0);
         cable.update(4);
+        
+        if(!active){
+            dx=(xStart-xOffset-x)*.2;
+            dy=(yStart-yOffset-y)*.2;
+        }
     }
     @Override
     public void Render(){

@@ -21,9 +21,9 @@ import java.util.logging.Logger;
  * @author pcowal15
  */
 public class HeartGame extends GameLoop{
-    Sprite body, heart, font, syringe;
+    Sprite bodyHitbox, patient, heart, font, syringe, iv, scope, table;
     BeatController beat;
-    Sound music, heartbeat;
+    Sound music, normal, fast, slow;
     ArrayList<Button> buttons;
     Patient p;
     ArrayList<Draggable> items;
@@ -42,17 +42,24 @@ public class HeartGame extends GameLoop{
             buttons=new ArrayList<Button>();
             feedback=new ArrayList<Feedback>();
             
-            body=new Sprite("hitbox.png",-1);
+            table=new Sprite("table_temp.png", -1);
+            patient=new Sprite("artwork/patients/patient colored.png", -1);
+            bodyHitbox=new Sprite("hitbox.png",-1);
             heart=new Sprite("heartbeat_strip8.png",-1);
             font=new Sprite("12x8test2t_strip96.png",-1);
-            syringe=new Sprite("syringe.png",-1);
+            syringe=new Sprite("Syringe_strip4.png",-1);
+            iv=new Sprite("artwork/IV.png", -1);
             music=new Sound("heartbeat soundtrack/particles_70.wav");
-            heartbeat=new Sound("normal_01.wav");
+            normal=new Sound("normal2.wav");
+            fast=new Sound("fast.wav");
+            slow=new Sound("slow.wav");
             beat=new BeatController(music, 70.);
             
-            buttons.add(new Button(this, "Tach.", 200,10,100,18, 1));
+            buttons.add(new Button(this, "Tachy.", 200,100,100,18, 1));
+            buttons.add(new Button(this, "Brady.", 200,120,100,18, 2));
+            buttons.add(new Button(this, "Arrh.", 200,140,100,18, 3));
             items.add(new TachySyringe(this));
-            p=new Patient(this,1,false);
+            p=new Patient(this,1,true);
             
             items.add(new Stethoscope(this));
 
@@ -92,6 +99,13 @@ public class HeartGame extends GameLoop{
                 switch(b.id){
                     case 1:
                         items.add(new TachySyringe(this));
+                        break;
+                    case 2:
+                        items.add(new BradyIV(this));
+                        break;
+                    case 3:
+                        items.add(new ArrhSyringe(this));
+                        break;
                 }
             }
         }

@@ -9,9 +9,9 @@ package heartbeat;
  *
  * @author pcowal15
  */
-public class TachySyringe extends Draggable{
+public class ArrhSyringe extends Draggable{
     boolean filled;
-    public TachySyringe(HeartGame g){
+    public ArrhSyringe(HeartGame g){
         super(g, g.syringe, 350+(int)(Math.random()*50), 5+(int)(Math.random()*50));
         filled=true;
     }
@@ -31,12 +31,7 @@ public class TachySyringe extends Draggable{
             int c=game.p.getHitbox((int)x-w, (int)y);
             if(c==Patient.ARM_HITBOX || c==Patient.VEIN_HITBOX){
                 //game.feedback.add(new Feedback(game, c+"", (int)x-w, (int)y-h));
-                if(game.p.nextStatus==Patient.STATUS_TACHYCARDIA){
-                    game.p.changeStatus(Patient.STATUS_NORMAL, 200);
-                }
-                else if(Math.random()<0.3){
-                    game.p.changeStatus(Patient.STATUS_BRADYCARDIA, 200);
-                }
+                game.p.arrhythmia=false;
                 filled=false;
                 essential=false;
             }
