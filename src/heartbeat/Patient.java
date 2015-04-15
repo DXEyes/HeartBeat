@@ -25,6 +25,8 @@ public class Patient {
     public static final int STATUS_BRADYCARDIA=-1;
     public static final int STATUS_STOPPED=2;
     
+    boolean exiting;
+    
     double heartOpacity;
     int sc;
     Sprite heart, body;
@@ -46,7 +48,22 @@ public class Patient {
         statusCounter=time;
     }
     
+    public void exit(){
+        exiting=true;
+    }
     public void update(){
+        if(exiting){
+            if(x>-200){
+                x-=10;
+            }
+            else{
+                exiting=false;
+            }
+        }
+        else{
+            if(x<0)x+=10;
+        }
+        
         if(statusCounter>0)statusCounter--;
         else heartStatus=nextStatus;
         
@@ -93,7 +110,7 @@ public class Patient {
     public void render(){
         game.drawSprite(game.table, 0, x, 0);
         game.drawSprite(game.patient, 0,x,0);
-        game.drawSpriteFiltered(heart, heartFrame, 40, 50, (int)(heartOpacity*255), 255, 255, 255);
+        
         
         String s="Nothing";
         int c=getHitbox(game.mouseX, game.mouseY);
@@ -119,6 +136,9 @@ public class Patient {
         game.drawText(nextStatus+"", game.font, 100, 60);
         game.drawText(statusCounter+"", game.font, 100, 80);
         
+    }
+    public void renderHeart(){
+        game.drawSpriteFiltered(heart, heartFrame, 40, 50, (int)(heartOpacity*255), 255, 255, 255);
     }
     public static final int BODY_HITBOX=0xFF000000;
     public static final int ARM_HITBOX=0xFFFF0000;
