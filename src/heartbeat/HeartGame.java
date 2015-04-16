@@ -21,7 +21,8 @@ import java.util.logging.Logger;
  * @author pcowal15
  */
 public class HeartGame extends GameLoop{
-    Sprite bodyHitbox, patient, heart, font, syringe, iv, scope, table;
+    Sprite bodyHitbox, patient, heart, font, syringe, iv, scope, table, logo, background;
+    Logo logoAnim;
     BeatController beat;
     Sound music, normal, fast, slow;
     ArrayList<Button> buttons;
@@ -32,9 +33,10 @@ public class HeartGame extends GameLoop{
     int prevFPS;
     Scorekeeper scorekeeper;
     int state;
-    public static final int STATE_GAME=1;
-    public static final int STATE_FEEDBACK=2;
-    public static final int STATE_MENU=0;
+    public static final int STATE_GAME=2;
+    public static final int STATE_FEEDBACK=3;
+    public static final int STATE_MENU=1;
+    public static final int STATE_INTRO=0;
     Cable c;
     public HeartGame(){
         super(320,180);
@@ -47,6 +49,8 @@ public class HeartGame extends GameLoop{
             buttons=new ArrayList<Button>();
             feedback=new ArrayList<Feedback>();
             
+            background=new Sprite("tilebg.png",-1);
+            logo=new Sprite("logo_strip4.png", -1);
             scope=new Sprite("artwork/scope.png",-1);
             table=new Sprite("table_temp.png", -1);
             patient=new Sprite("artwork/patients/patient colored.png", -1);
@@ -56,7 +60,7 @@ public class HeartGame extends GameLoop{
             syringe=new Sprite("Syringe_strip4.png",-1);
             iv=new Sprite("artwork/IV.png", -1);
             
-            
+            this.backgroundColor=0xFF000000;
             normal=new Sound("normal2.wav");
             fast=new Sound("fast.wav");
             slow=new Sound("slow2.wav");
@@ -72,6 +76,8 @@ public class HeartGame extends GameLoop{
             
             scorekeeper=new Scorekeeper(this);
             dragging=false;
+            
+            logoAnim=new Logo(this);
             
             playTune(4);
             
@@ -98,6 +104,13 @@ public class HeartGame extends GameLoop{
                 canClick=true;
             }
         }
+        
+        if(state==STATE_GAME)gameUpdate();
+        
+        
+    }
+    
+    public void gameUpdate(){
         p.update();
         for(Draggable d:items){
             d.update();
@@ -120,28 +133,36 @@ public class HeartGame extends GameLoop{
                 }
             }
         }
-        
     }
-
+    
     @Override
     public void Render() {
-        p.render();
-        blur((int)(600*p.heartOpacity));
-        p.renderHeart();
-        for(Draggable d:items){
-            d.render();
+        if(state==STATE_INTRO){
+            logoAnim.render();
+            if(logoAnim.done()){
+                state=STATE_GAME;
+                this.backgroundColor=0;
+            }
         }
-        for(Button b:buttons){
-            b.render();
+        if(state==STATE_GAME){
+            drawSprite(background, 0, 0, 0);
+            p.render();
+            blur((int)(600*p.heartOpacity));
+            p.renderHeart();
+            for(Draggable d:items){
+                d.render();
+            }
+            for(Button b:buttons){
+                b.render();
+            }
+            ListIterator l=feedback.listIterator();
+            while(l.hasNext()){
+                Feedback f=(Feedback)l.next();
+                f.render();
+                if(f.life<=0)l.remove();
+            }
+            scorekeeper.render();
         }
-        ListIterator l=feedback.listIterator();
-        while(l.hasNext()){
-            Feedback f=(Feedback)l.next();
-            f.render();
-            if(f.life<=0)l.remove();
-        }
-        scorekeeper.render();
-        
         
         //this.drawText("Hello World!", font, 100, 20);
         //this.drawText("The quick brown fox", font, 100, 80);
