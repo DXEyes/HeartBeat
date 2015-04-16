@@ -31,7 +31,13 @@ public class ArrhSyringe extends Draggable{
             int c=game.p.getHitbox((int)x-w, (int)y);
             if(c==Patient.ARM_HITBOX || c==Patient.VEIN_HITBOX){
                 //game.feedback.add(new Feedback(game, c+"", (int)x-w, (int)y-h));
-                game.p.arrhythmia=false;
+                if(game.p.arrhythmia){
+                    game.scorekeeper.addPoints(10);
+                    game.p.arrhythmia=false;
+                }
+                else{
+                    game.scorekeeper.addPoints(-10);
+                }
                 filled=false;
                 essential=false;
             }

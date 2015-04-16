@@ -49,6 +49,13 @@ public class Patient {
     }
     
     public void exit(){
+        if(heartStatus==STATUS_NORMAL && !arrhythmia){
+            game.scorekeeper.addPoints(100);
+            game.scorekeeper.increaseCombo();
+        }
+        else{
+            game.scorekeeper.resetCombo();
+        }
         exiting=true;
     }
     public void update(){

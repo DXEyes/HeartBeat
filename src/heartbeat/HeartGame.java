@@ -30,7 +30,7 @@ public class HeartGame extends GameLoop{
     ArrayList<Feedback> feedback;
     boolean dragging, canClick, click;
     int prevFPS;
-    
+    Scorekeeper scorekeeper;
     int state;
     public static final int STATE_GAME=1;
     public static final int STATE_FEEDBACK=2;
@@ -70,7 +70,7 @@ public class HeartGame extends GameLoop{
             
             items.add(new Stethoscope(this));
             
-            
+            scorekeeper=new Scorekeeper(this);
             dragging=false;
             
             playTune(4);
@@ -140,7 +140,7 @@ public class HeartGame extends GameLoop{
             f.render();
             if(f.life<=0)l.remove();
         }
-        
+        scorekeeper.render();
         
         
         //this.drawText("Hello World!", font, 100, 20);

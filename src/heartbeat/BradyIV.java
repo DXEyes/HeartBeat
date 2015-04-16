@@ -38,6 +38,7 @@ public class BradyIV extends Draggable{
             if(count<0){
                 count=600;
                 if(game.p.heartStatus==Patient.STATUS_BRADYCARDIA){
+                    game.scorekeeper.addPoints(10);
                     if(Math.random()<0.2){
                         game.p.changeStatus(Patient.STATUS_TACHYCARDIA,5);
                     }
@@ -49,6 +50,7 @@ public class BradyIV extends Draggable{
                     }
                 }
                 else{
+                    game.scorekeeper.addPoints(-10);
                     if(Math.random()<0.5){
                         game.p.changeStatus(Patient.STATUS_TACHYCARDIA,5);
                     }

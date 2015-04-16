@@ -33,9 +33,11 @@ public class TachySyringe extends Draggable{
                 //game.feedback.add(new Feedback(game, c+"", (int)x-w, (int)y-h));
                 if(game.p.nextStatus==Patient.STATUS_TACHYCARDIA){
                     game.p.changeStatus(Patient.STATUS_NORMAL, 200);
+                    game.scorekeeper.addPoints(10);
                 }
                 else if(Math.random()<0.3){
                     game.p.changeStatus(Patient.STATUS_BRADYCARDIA, 200);
+                    game.scorekeeper.addPoints(-10);
                 }
                 filled=false;
                 essential=false;
