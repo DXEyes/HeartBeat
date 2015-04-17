@@ -13,14 +13,16 @@ public class Menu {
     HeartGame game;
     int menuTimer, t;
     boolean active;
-    Button start, exit, credits, options;
+    Button start, exit, scores, credits;
     
     public Menu(HeartGame game){
         this.game=game;
         menuTimer=60;
         active=true;
-        start=new Button(game, "START!!!", 120, 120, 80, 16, 1);
-        exit=new Button(game, "exit :(", 120, 140, 80, 16, 2);
+        start=new Button(game, "START!!!", 79, 122, 80, 16, 1);
+        scores=new Button(game, "Scores!", 161, 122, 80, 16, 2);
+        credits=new Button(game, "Credits", 79, 144, 80, 16, 2);
+        exit=new Button(game, "exit :(", 161, 144, 80, 16, 2);
         game.pulse.y=82;
     }
     public void update(){
@@ -48,13 +50,17 @@ public class Menu {
         game.drawSprite(game.background, 0, t%320-320, 0);
         game.pulse.render();
         
-        int to=quad(30);
-        start.yOffset=quad(20);
-        exit.yOffset=quad(10);
+        int to=quad(40);
+        start.yOffset=quad(30);
+        scores.yOffset=quad(20);
+        credits.yOffset=quad(10);
+        exit.yOffset=quad(0);
         
         
         game.drawSpriteScaled(game.title, (game.beat.getBeat()%8==0)?0:1, 160-78, 60-44-to, 160+78, 60+44-to);
         start.render();
+        scores.render();
+        credits.render();
         exit.render();
     }
 }

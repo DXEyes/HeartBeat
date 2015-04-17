@@ -17,7 +17,7 @@ public class TachySyringe extends Draggable{
     }
     @Override
     public void Update() {
-        if(!filled && subimg<3)subimg++;
+        if(!filled && subimg<6)subimg++;
     }
 
     @Override

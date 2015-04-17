@@ -30,12 +30,17 @@ public class BradyIV extends Draggable{
         if(!active){
             int c=game.p.getHitbox((int)x-w, (int)y+h);
             if(c==Patient.VEIN_HITBOX){
-                count-=2;
-                if((count/2)%50==0)game.scorekeeper.addPoints(5);
+                if(subimg<3)subimg++;
+                count-=3;
+                if(count%100<3)game.scorekeeper.addPoints(5);
                 
             }
             else if(c==Patient.ARM_HITBOX){
+                if(subimg<3)subimg++;
                 count--;
+            }
+            else{
+                subimg=0;
             }
             if(count<0){
                 count=600;
@@ -68,6 +73,7 @@ public class BradyIV extends Draggable{
         }
         else{
             count=600;
+            subimg=0;
         }
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

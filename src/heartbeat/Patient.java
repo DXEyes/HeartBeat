@@ -69,7 +69,7 @@ public class Patient {
             arrhythmia=true;
         }
         if(Math.random()<0.3)arrhythmia=true;
-        if(Math.random()<0.15)heartStatus=STATUS_STOPPED;
+        if(Math.random()<0.2)heartStatus=STATUS_STOPPED;
         nextStatus=heartStatus;
         
     }
@@ -80,11 +80,15 @@ public class Patient {
     
     public void exit(){
         if(heartStatus==STATUS_NORMAL && !arrhythmia){
+            game.scorekeeper.patientCount++;
+            game.scorekeeper.patientsTreated++;
             game.scorekeeper.addPoints(100);
-            game.scorekeeper.increaseCombo();
+            game.scorekeeper.increaseCombo(1);
         }
         else{
-            game.scorekeeper.resetCombo();
+            game.scorekeeper.patientCount++;
+            if(heartStatus==STATUS_STOPPED)game.scorekeeper.resetCombo();
+            else game.scorekeeper.halveCombo();
         }
         exiting=true;
     }
@@ -139,31 +143,32 @@ public class Patient {
         
         
         if(heartStatus==STATUS_STOPPED){
+            game.normal.setVolume(0.7f);
             arrhythmia=false;
             if(game.click && this.getHitbox(game.mouseX, game.mouseY)==CHEST_HITBOX){
                 int b=(int)((double)game.beat.getBeat()*tempo)%8;
-                if(b==0||b==7){
-                    game.scorekeeper.increaseCombo();
+                if(b==0){
+                    game.scorekeeper.increaseCombo(0.1);
                     game.scorekeeper.addPoints(5);
                     game.feedback.add(new Feedback(game, "GREAT!", game.mouseX, game.mouseY));
                     cprCount+=3;
                     if(cprCount>16){
                         changeStatus(STATUS_NORMAL,5);
                     }
+                    sc=1;
                 }
-                else if(b==1||b==6){
-                    game.scorekeeper.increaseCombo();
+                else if(b==1||b==7){
+                    game.scorekeeper.increaseCombo(0.05);
                     game.feedback.add(new Feedback(game, "Good!", game.mouseX, game.mouseY));
                     cprCount+=2;
                     if(cprCount>16){
                         changeStatus(STATUS_NORMAL,5);
                     }
+                    sc=1;
                 }
-                else if(b==2||b==5){
-                    game.scorekeeper.increaseCombo();
+                else if(b==2||b==6){
                     game.feedback.add(new Feedback(game, "Okay", game.mouseX, game.mouseY));
                     cprCount+=1;
-                    
                 }
                 else{
                     game.feedback.add(new Feedback(game, "Miss", game.mouseX, game.mouseY));
@@ -180,7 +185,7 @@ public class Patient {
         heartFrame=(int)((double)game.beat.getBeat()*tempo)%8;
         if(!beat && heartFrame==0){
             if(heartStatus==STATUS_STOPPED){
-                game.scorekeeper.decreaseCombo();
+                game.scorekeeper.decreaseCombo(0.1);
                 if(cprCount>0)cprCount--;
             }
             else{
