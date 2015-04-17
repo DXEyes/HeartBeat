@@ -37,7 +37,7 @@ public class HeartGame extends GameLoop{
     boolean dragging, canClick, click;
     int prevFPS;
     Scorekeeper scorekeeper;
-    int state;
+    int state, duration;
     public static final int STATE_GAME=2;
     public static final int STATE_FEEDBACK=3;
     public static final int STATE_MENU=1;
@@ -93,7 +93,7 @@ public class HeartGame extends GameLoop{
             
             logoAnim=new Logo(this);
             
-            state=STATE_GAME;
+            //state=STATE_GAME;
             
             menu=new Menu(this);
             playTune(3);
@@ -124,10 +124,24 @@ public class HeartGame extends GameLoop{
         
         if(state==STATE_GAME)gameUpdate();
         
-        if(state==STATE_MENU)menu.update();
+        if(state==STATE_MENU){
+            menu.update();
+            if(menu.done()){
+                playTune(1+(int)(Math.random()*4));
+                state=STATE_GAME;
+            }
+        }
     }
     
     public void gameUpdate(){
+        int n=beat.getBeat()/8;
+        if(n>duration){
+            state=STATE_FEEDBACK;
+        }
+        else if(n>duration-8){
+            
+        }
+        
         p.update();
         ListIterator l=items.listIterator();
         while(l.hasNext()){
@@ -175,7 +189,6 @@ public class HeartGame extends GameLoop{
         }
         if(state==STATE_MENU){
             menu.render();
-            
         }
         
         if(state==STATE_GAME){
@@ -223,25 +236,30 @@ public class HeartGame extends GameLoop{
     }
     
     public void playTune(int i){
+        if(music!=null) music.stop();
         switch(i){
             case 1:
                 music=new Sound("heartbeat soundtrack/particles_70.wav");
+                duration=216;
                 beat=new BeatController(music, 70.);
                 beat.start();
                 break;
             case 2:
                 music=new Sound("heartbeat soundtrack/johnson glitch mix_75.wav");
                 beat=new BeatController(music, 75.);
+                duration=184;
                 beat.start();
                 break;
             case 3:
                 music=new Sound("heartbeat soundtrack/silvertone_2_100.wav");
                 beat=new BeatController(music, 100);
+                duration=288;
                 beat.start();
                 break;
             case 4:
                 music=new Sound("heartbeat soundtrack/lo_instrumental_100p4.wav");
                 beat=new BeatController(music, 100.4);
+                duration=352;
                 beat.start();
                 break;
         }

@@ -14,6 +14,7 @@ public class Menu {
     int menuTimer, t;
     boolean active;
     Button start, exit, credits, options;
+    
     public Menu(HeartGame game){
         this.game=game;
         menuTimer=60;
@@ -27,11 +28,14 @@ public class Menu {
         if(active && menuTimer>0)--menuTimer;
         else ++menuTimer;
         
-        if(start.clicked())active=false;
+        if(start.clicked()){
+            active=false;
+            game.music.stop();
+        }
         if(exit.clicked())System.exit(0);
     }
     public boolean done(){
-        return menuTimer>40;
+        return menuTimer>60;
     }
     public int quad(int offset){
         int q=Math.max(menuTimer-offset, 0);
