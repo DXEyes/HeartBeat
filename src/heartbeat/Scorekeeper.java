@@ -31,7 +31,7 @@ public class Scorekeeper {
         ++combo;
     }
     public void decreaseCombo(){
-        --combo;
+        if(combo>1)--combo;
     }
     public void halveCombo(){
         combo/=2;

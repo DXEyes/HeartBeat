@@ -69,7 +69,7 @@ public class Patient {
             arrhythmia=true;
         }
         if(Math.random()<0.3)arrhythmia=true;
-        if(Math.random()<0.08)heartStatus=STATUS_STOPPED;
+        if(Math.random()<0.15)heartStatus=STATUS_STOPPED;
         nextStatus=heartStatus;
         
     }
@@ -144,13 +144,33 @@ public class Patient {
                 int b=(int)((double)game.beat.getBeat()*tempo)%8;
                 if(b==0||b==7){
                     game.scorekeeper.increaseCombo();
+                    game.scorekeeper.addPoints(5);
+                    game.feedback.add(new Feedback(game, "GREAT!", game.mouseX, game.mouseY));
+                    cprCount+=3;
+                    if(cprCount>16){
+                        changeStatus(STATUS_NORMAL,5);
+                    }
+                }
+                else if(b==1||b==6){
+                    game.scorekeeper.increaseCombo();
+                    game.feedback.add(new Feedback(game, "Good!", game.mouseX, game.mouseY));
                     cprCount+=2;
                     if(cprCount>16){
                         changeStatus(STATUS_NORMAL,5);
                     }
                 }
+                else if(b==2||b==5){
+                    game.scorekeeper.increaseCombo();
+                    game.feedback.add(new Feedback(game, "Okay", game.mouseX, game.mouseY));
+                    cprCount+=1;
+                    
+                }
                 else{
+                    game.feedback.add(new Feedback(game, "Miss", game.mouseX, game.mouseY));
                     game.scorekeeper.addPoints(-1);
+                }
+                if(cprCount>16){
+                    changeStatus(STATUS_NORMAL,5);
                 }
             }
         }

@@ -5,6 +5,8 @@
  */
 package heartbeat;
 
+import gamebase.GameLoop;
+
 /**
  *
  * @author pcowal15
@@ -21,7 +23,9 @@ public class Feedback {
         life=20;
     }
     public void render(){
-        game.drawText(text, game.fontBlack, x, y);
+        game.blendMode=GameLoop.BM_DIFFERENCE;
+        game.drawText(text, game.fontWhite, x, y);
+        game.blendMode=GameLoop.BM_NORMAL;
         life--;
         y-=2;
     }
