@@ -13,7 +13,7 @@ import java.awt.event.MouseEvent;
  */
 public class Button {
     HeartGame game;
-    int x1, y1, x2, y2;
+    int x1, y1, x2, y2, xOffset, yOffset;
     int color, colorHover, colorClicked, colorBorder, id;
     String text;
     public Button(HeartGame game, String text, int x1, int y1, int w, int h, int id){
@@ -51,9 +51,9 @@ public class Button {
                 c=colorHover;
             }
         }
-        game.drawRectangle(x1, y1, x2, y2, c, false);
-        game.drawRectangle(x1, y1, x2, y2, colorBorder, true);
-        game.drawText(text, game.font, x1+2, y1+2);
+        game.drawRectangle(x1+xOffset, y1+yOffset, x2+xOffset, y2+yOffset, c, false);
+        game.drawRectangle(x1+xOffset, y1+yOffset, x2+xOffset, y2+yOffset, colorBorder, true);
+        game.drawText(text, game.fontBlack, x1+2+xOffset, y1+2+yOffset);
     }
     
 }

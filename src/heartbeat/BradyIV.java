@@ -31,6 +31,8 @@ public class BradyIV extends Draggable{
             int c=game.p.getHitbox((int)x-w, (int)y+h);
             if(c==Patient.VEIN_HITBOX){
                 count-=2;
+                if((count/2)%50==0)game.scorekeeper.addPoints(5);
+                
             }
             else if(c==Patient.ARM_HITBOX){
                 count--;
@@ -57,6 +59,9 @@ public class BradyIV extends Draggable{
                     else{
                         game.p.arrhythmia=true;
                     }
+                    if(Math.random()<0.3){
+                        game.p.changeStatus(Patient.STATUS_STOPPED, 5);
+                    }
                 }
             }
             
@@ -70,7 +75,7 @@ public class BradyIV extends Draggable{
     @Override
     public void Render() {
         cable.render();
-        game.drawText(count+"", game.font, (int)x+30, (int)y);
+        game.drawText(count+"", game.fontBlack, (int)x+30, (int)y);
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

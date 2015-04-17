@@ -21,7 +21,7 @@ public class Feedback {
         life=20;
     }
     public void render(){
-        game.drawText(text, game.font, x, y);
+        game.drawText(text, game.fontBlack, x, y);
         life--;
         y-=2;
     }

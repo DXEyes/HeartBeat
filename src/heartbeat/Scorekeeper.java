@@ -5,6 +5,8 @@
  */
 package heartbeat;
 
+import gamebase.GameLoop;
+
 /**
  *
  * @author pcowal15
@@ -28,6 +30,13 @@ public class Scorekeeper {
     public void increaseCombo(){
         ++combo;
     }
+    public void decreaseCombo(){
+        --combo;
+    }
+    public void halveCombo(){
+        combo/=2;
+        if(combo<1)combo=1;
+    }
     public void render(){
         
         for(int i=100000; i>10; i/=10){
@@ -35,22 +44,28 @@ public class Scorekeeper {
                 scoreDisplay+=i/5;
                 break;
             }
+            if(scoreDisplay>score+i){
+                scoreDisplay-=i/5;
+                break;
+            }
         }
         if(scoreDisplay<score)scoreDisplay++;
-        
+        if(scoreDisplay>score)scoreDisplay--;
         int s2=scoreDisplay;
         int offset=0;
         while (s2>=10){
             s2/=10;
-            offset+=game.font.width;
+            offset+=game.fontBlack.width;
         }
-        game.drawText(scoreDisplay+"", game.font, 310-offset, 5);
+        game.blendMode=GameLoop.BM_DIFFERENCE;
+        game.drawText(scoreDisplay+"", game.fontWhite, 310-offset, 5);
         s2=combo;
-        offset=game.font.width;
+        offset=game.fontBlack.width;
         while (s2>=10){
             s2/=10;
-            offset+=game.font.width;
+            offset+=game.fontBlack.width;
         }
-        game.drawText("x"+combo, game.font, 310-offset, 25);
+        game.drawText("x"+combo, game.fontWhite, 310-offset, 25);
+        game.blendMode=GameLoop.BM_NORMAL;
     }
 }

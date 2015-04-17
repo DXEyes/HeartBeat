@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.ListIterator;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,12 +22,16 @@ import java.util.logging.Logger;
  * @author pcowal15
  */
 public class HeartGame extends GameLoop{
-    Sprite bodyHitbox, patient, heart, font, syringe, iv, scope, table, logo, background;
+    Sprite bodyHitbox, patientSkin, patientHair, patientClothes, patientEyes,
+     heart, fontBlack, fontWhite, syringe, iv, scope, table, logo, background, title;
     Logo logoAnim;
+    
+    Menu menu;
     BeatController beat;
     Sound music, normal, fast, slow;
     ArrayList<Button> buttons;
     Patient p;
+    PulseAnimation pulse;
     ArrayList<Draggable> items;
     ArrayList<Feedback> feedback;
     boolean dragging, canClick, click;
@@ -45,19 +50,28 @@ public class HeartGame extends GameLoop{
     @Override
     public void Initialize() {
         try {
+            
+            
             items=new ArrayList<Draggable>();
             buttons=new ArrayList<Button>();
             feedback=new ArrayList<Feedback>();
             
-            background=new Sprite("tilebg.png",-1);
-            logo=new Sprite("logo_strip4.png", -1);
+            pulse=new PulseAnimation(this, 140,60);
+            
+            title=new Sprite("artwork/title_strip2.png",-1);
+            background=new Sprite("artwork/tilebg.png",-1);
+            logo=new Sprite("artwork/logo_strip4.png", -1);
             scope=new Sprite("artwork/scope.png",-1);
-            table=new Sprite("table_temp.png", -1);
-            patient=new Sprite("artwork/patients/patient colored.png", -1);
-            bodyHitbox=new Sprite("hitbox.png",-1);
-            heart=new Sprite("heartbeat_strip8.png",-1);
-            font=new Sprite("12x8FontFixed.png",94);
-            syringe=new Sprite("Syringe_strip4.png",-1);
+            table=new Sprite("artwork/table_temp.png", -1);
+            patientSkin=new Sprite("artwork/patient_skin_strip4.png", -1);
+            patientHair=new Sprite("artwork/hair_strip4.png", -1);
+            patientClothes=new Sprite("artwork/clothes_strip4.png", -1);
+            patientEyes=new Sprite("artwork/eyes_strip5.png", -1);
+            bodyHitbox=new Sprite("artwork/hitbox.png",-1);
+            heart=new Sprite("artwork/heartbeat_strip8.png",-1);
+            fontBlack=new Sprite("artwork/12x8FontFixed.png",94);
+            fontWhite=new Sprite("artwork/12x8FontWhite.png",94);
+            syringe=new Sprite("artwork/Syringe_strip4.png",-1);
             iv=new Sprite("artwork/IV.png", -1);
             
             this.backgroundColor=0xFF000000;
@@ -70,7 +84,7 @@ public class HeartGame extends GameLoop{
             buttons.add(new Button(this, "Tachycardia", 200,100,113,18, 1));
             buttons.add(new Button(this, "Bradycardia", 200,120,113,18, 2));
             buttons.add(new Button(this, "Atrial Fib.", 200,140,113,18, 3));
-            p=new Patient(this,1,true);
+            p=new Patient(this);
             
             items.add(new Stethoscope(this));
             
@@ -79,7 +93,10 @@ public class HeartGame extends GameLoop{
             
             logoAnim=new Logo(this);
             
-            playTune(4);
+            state=STATE_GAME;
+            
+            menu=new Menu(this);
+            playTune(3);
             
         } catch (IOException ex) {
             Logger.getLogger(HeartGame.class.getName()).log(Level.SEVERE, null, ex);
@@ -107,13 +124,16 @@ public class HeartGame extends GameLoop{
         
         if(state==STATE_GAME)gameUpdate();
         
-        
+        if(state==STATE_MENU)menu.update();
     }
     
     public void gameUpdate(){
         p.update();
-        for(Draggable d:items){
+        ListIterator l=items.listIterator();
+        while(l.hasNext()){
+            Draggable d=(Draggable)l.next();
             d.update();
+            if(!d.essential && (d.x<-50 || d.x>width+50 || d.y<-50 || d.y>height+50))l.remove();
         }
         for(Button b:buttons){
             if(b.clicked()){
@@ -140,10 +160,24 @@ public class HeartGame extends GameLoop{
         if(state==STATE_INTRO){
             logoAnim.render();
             if(logoAnim.done()){
-                state=STATE_GAME;
-                this.backgroundColor=0;
+                pulse.render();
+                int b=beat.getBeat()/8;
+                drawText(beat.getBeat()/8+" ",fontWhite,0,0);
+                if(b==31){
+                    blendMode=BM_DIFFERENCE;
+                    this.drawRectangle(0, 0, width, height, 0xFFFFFFFF, false);
+                }
+                if(b==32){
+                    state=STATE_MENU;
+                    this.backgroundColor=0;
+                }
             }
         }
+        if(state==STATE_MENU){
+            menu.render();
+            
+        }
+        
         if(state==STATE_GAME){
             drawSprite(background, 0, 0, 0);
             p.render();
@@ -163,7 +197,6 @@ public class HeartGame extends GameLoop{
             }
             scorekeeper.render();
         }
-        
         //this.drawText("Hello World!", font, 100, 20);
         //this.drawText("The quick brown fox", font, 100, 80);
         
@@ -252,7 +285,16 @@ public class HeartGame extends GameLoop{
         }
         
     }
-
+    public void drawText2(String text, Sprite font, int x, int y){
+        Scanner s=new Scanner(text);
+        int y1=y;
+        while(s.hasNextLine()){
+            this.drawText(s.nextLine(), font, x, y1);
+            y1+=font.height+1;
+        }
+        
+    }
+    
     @Override
     public void mouseWheelRotated(int i) {
         
