@@ -149,6 +149,10 @@ public class HeartGame extends GameLoop{
         }
         if(state==STATE_SCORES || state==STATE_CREDITS){
             if(back.clicked())returnToMenu();
+            int n=beat.getBeat()/8;
+            if(n>duration){
+                playTune(1+(int)(Math.random()*4));
+            }
         }
         prevMouseX=mouseX;
     }
