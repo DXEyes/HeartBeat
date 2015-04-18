@@ -31,9 +31,10 @@ public class TachySyringe extends Draggable{
     @Override
     public void Use() {
         if(filled){
-            game.hiss.play();
+            
             int c=game.p.getHitbox((int)x-w, (int)y);
             if(c==Patient.ARM_HITBOX || c==Patient.VEIN_HITBOX){
+                game.hiss.play();
                 //game.feedback.add(new Feedback(game, c+"", (int)x-w, (int)y-h));
                 if(game.p.nextStatus==Patient.STATUS_TACHYCARDIA){
                     game.p.changeStatus(Patient.STATUS_NORMAL, 200);
