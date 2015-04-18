@@ -71,7 +71,7 @@ public class Tutorial {
                 game.drawText2("<Apply Here", font, 85, 75);
                 break;
             case 8:
-                game.drawText2("<Apply here, and\naim for the VEIN", font, 85, 90);
+                game.drawText2("<Apply here, and\naim for the VEIN", font, 88, 90);
                 break;
         }
         //game.blendMode=GameLoop.BM_NORMAL;
