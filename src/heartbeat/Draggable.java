@@ -19,7 +19,7 @@ public abstract class Draggable {
     int useTimer;
     int xStart, yStart, xOffset, yOffset, w, h;
     double x, y, dx, dy;
-    boolean active, essential;
+    boolean active, essential, alive;
     
     public Draggable(HeartGame game, Sprite spr, int xStart, int yStart){
         this.game=game;
@@ -33,6 +33,7 @@ public abstract class Draggable {
         this.yStart=yStart;
         active=false;
         essential=true;
+        alive=true;
         subimg=0;
     }
     

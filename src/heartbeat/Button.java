@@ -32,6 +32,7 @@ public class Button {
     public boolean clicked(){
         if(game.mbPressed[MouseEvent.BUTTON1]){
             if(hover()&&game.click){
+                if(game.state!=HeartGame.STATE_GAME)game.beep.play();
                 return true;
             }
         }

@@ -22,7 +22,7 @@ public class Patient {
     
     int skin, clothes, hair, eyes;
     
-    int blink;
+    int blink, bc;
     boolean arrhythmia;
     public static final int STATUS_NORMAL=0;
     public static final int STATUS_TACHYCARDIA=1;
@@ -106,23 +106,36 @@ public class Patient {
         }
         if(game.click && getHitbox(game.mouseX, game.mouseY)==Patient.HEAD_HITBOX){
             blink=-100;
+            if(bc>=0)bc+=20;
+        }
+        if(bc>0)bc--;
+        if(bc>200){
+            game.achievement.display("ARE YOU AWAKE??!?!");
+            bc=-1;
         }
         if(exiting){
+            int c=0;
             if(x>-200){
                 for(Draggable d:game.items){
                     if(d instanceof TachySyringe || d instanceof ArrhSyringe){
                         if(this.getHitbox((int)(d.x-d.w-x), (int)d.y)!=0)d.x-=10;
+                        ++c;
                     }
                     if(d instanceof BradyIV){
                         
                         if(this.getHitbox((int)(d.x-d.w-x), (int)d.y+d.h)!=0){
                             d.essential=false;
                             d.x-=10;
+                            ++c;
                         }
                     }
                 }
                 
                 x-=10;
+                
+                if(c>=10 && heartStatus==Patient.STATUS_STOPPED){
+                    game.achievement.display("Proper Burial");
+                }
             }
             else{
                 exiting=false;
@@ -161,7 +174,7 @@ public class Patient {
                     if(cprCount>16){
                         changeStatus(STATUS_NORMAL,5);
                     }
-                    sc=1;
+                    game.cpr.play();
                 }
                 else if(b==1||b==7){
                     game.scorekeeper.increaseCombo(0.05);
@@ -170,7 +183,7 @@ public class Patient {
                     if(cprCount>16){
                         changeStatus(STATUS_NORMAL,5);
                     }
-                    sc=1;
+                    game.cpr.play();
                 }
                 else if(b==2||b==6){
                     game.feedback.add(new Feedback(game, "Okay", game.mouseX, game.mouseY));
@@ -258,9 +271,11 @@ public class Patient {
             s="Defib";
             break;
         }
-        game.drawText(heartStatus+"", game.fontBlack, 100, 40);
-        game.drawText(nextStatus+"", game.fontBlack, 100, 60);
-        game.drawText(statusCounter+"", game.fontBlack, 100, 80);
+        if(game.keysPressed['B'] && game.keysPressed['D']){
+            game.drawText(heartStatus+"", game.fontBlack, 100, 40);
+            game.drawText(nextStatus+"", game.fontBlack, 100, 60);
+            game.drawText(statusCounter+"", game.fontBlack, 100, 80);
+        }
         
     }
     public void renderHeart(){

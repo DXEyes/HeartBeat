@@ -95,6 +95,9 @@ public class Scorekeeper {
         if(signature.edited){
             menuButton.render();
             if(menuButton.clicked()){
+                if(signature.fullyBlack()){
+                    game.achievement.display("[redacted]");
+                }
                 game.highscores.addEntry(signature, score, rank);
                 try {
                     SerializationUtil.serialize(game.highscores, "highscores.hbh");

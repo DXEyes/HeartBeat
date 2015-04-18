@@ -18,16 +18,20 @@ public class TachySyringe extends Draggable{
     @Override
     public void Update() {
         if(!filled && subimg<6)subimg++;
+        if(this.active)game.tutorial.displayTutorial(7);
     }
 
     @Override
     public void Render() {
-        
+        if(active){
+            game.drawText("Acetaminophen", game.fontBlack, (int)x+15, (int)y-6);
+        }
     }
 
     @Override
     public void Use() {
         if(filled){
+            game.hiss.play();
             int c=game.p.getHitbox((int)x-w, (int)y);
             if(c==Patient.ARM_HITBOX || c==Patient.VEIN_HITBOX){
                 //game.feedback.add(new Feedback(game, c+"", (int)x-w, (int)y-h));
@@ -43,6 +47,10 @@ public class TachySyringe extends Draggable{
                 essential=false;
             }
             dx=dy=0;
+        }
+        if(x>180 && x<230 && y<35){
+            alive=false;
+            game.destroy.play();
         }
     }
     

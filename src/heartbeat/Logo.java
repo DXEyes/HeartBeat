@@ -14,30 +14,32 @@ import gamebase.GameLoop;
 public class Logo {
     HeartGame game;
     int t;
-    double x;
+    double x, x2;
     public Logo(HeartGame game){
         this.game=game;
-        x=-320;
+        x=-200;
     }
     public boolean done(){
-        return t>300;
+        return t>200;
     }
     public void render(){
         
         double r3=Math.sqrt(3)/2;
         
         t++;
-        if(t<200 && x<0)x+=5;
-        if(t>200)x+=5;
+        if(t<150 && x<0)x+=5;
+        if(t>150)x+=5;
+        
+        x2=(x*Math.abs(x))/100;
         game.blendMode=GameLoop.BM_ADD;
         
-        int x1=25-(int)(x);
+        int x1=25-(int)(x2);
         int y1=27;
         game.drawSpriteScaled(game.logo, 1, x1, y1, x1+270, y1+125);
-        x1=25+(int)(x/2);
-        y1=27+(int)(x*r3);
+        x1=25+(int)(x2/2);
+        y1=27+(int)(x2*r3);
         game.drawSpriteScaled(game.logo, 2, x1, y1, x1+270, y1+125);
-        y1=27-(int)(x*r3);
+        y1=27-(int)(x2*r3);
         game.drawSpriteScaled(game.logo, 3, x1, y1, x1+270, y1+125);
         game.blendMode=GameLoop.BM_NORMAL;
     }

@@ -33,6 +33,25 @@ public class Stethoscope extends Draggable{
         cable.setStart(x, y, 0);
         cable.update(4);
         
+        if(distsq<400){
+            boolean t=false;
+            if(game.p.heartStatus==Patient.STATUS_NORMAL){
+                t=game.tutorial.displayTutorial(2);
+            }
+            if(game.p.heartStatus==Patient.STATUS_TACHYCARDIA){
+                t=game.tutorial.displayTutorial(3);
+            }
+            else if(game.p.heartStatus==Patient.STATUS_BRADYCARDIA){
+                t=game.tutorial.displayTutorial(4);
+            }
+            if(!t && game.p.arrhythmia){
+                game.tutorial.displayTutorial(5);
+            }
+            if(game.p.heartStatus==Patient.STATUS_STOPPED){
+                t=game.tutorial.displayTutorial(6);
+            }
+        }
+        
         if(!active){
             dx=(xStart-xOffset-x)*.2;
             dy=(yStart-yOffset-y)*.2;

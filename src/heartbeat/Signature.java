@@ -24,6 +24,17 @@ public class Signature implements Serializable{
             pixels[x][y]=true;
         }
     }
+    public boolean fullyBlack(){
+        double c1, c2;
+        c1=c2=0;
+        for(int i=0; i<100; ++i){
+            for(int j=0; j<20; ++j){
+                c2++;
+                if(pixels[i][j])c1++;
+            }
+        }
+        return (c1/c2)>0.9;
+    }
     public void clear(){
         pixels=new boolean[100][20];
         edited=false;

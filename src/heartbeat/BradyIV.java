@@ -25,6 +25,8 @@ public class BradyIV extends Draggable{
 
     @Override
     public void Update() {
+        if(this.active)game.tutorial.displayTutorial(8);
+        
         cable.update(4);
         int offset=2;
         cable.setEnd(x+w-offset, y-h+offset, 0);
@@ -90,12 +92,22 @@ public class BradyIV extends Draggable{
     @Override
     public void Render() {
         cable.render();
-        game.drawText(count+"", game.fontBlack, (int)x+30, (int)y);
+        if(game.keysPressed['B'] && game.keysPressed['D']){
+            game.drawText(""+count, game.fontBlack, (int)x+10, (int)y-6);
+        }
+        else if(active){
+            game.drawText("Atropine", game.fontBlack, (int)x+10, (int)y-6);
+        }
+        
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void Use() {
+        if(x>180 && x<230 && y<35){
+            alive=false;
+            game.destroy.play();
+        }
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

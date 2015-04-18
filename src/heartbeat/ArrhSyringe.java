@@ -18,11 +18,14 @@ public class ArrhSyringe extends Draggable{
     @Override
     public void Update() {
         if(!filled && subimg<6)subimg++;
+        if(this.active)game.tutorial.displayTutorial(7);
     }
 
     @Override
     public void Render() {
-        
+        if(active){
+            game.drawText("Heparin", game.fontBlack, (int)x+15, (int)y-6);
+        }
     }
 
     @Override
@@ -30,6 +33,7 @@ public class ArrhSyringe extends Draggable{
         if(filled){
             int c=game.p.getHitbox((int)x-w, (int)y);
             if(c==Patient.ARM_HITBOX || c==Patient.VEIN_HITBOX){
+                game.hiss.play();
                 //game.feedback.add(new Feedback(game, c+"", (int)x-w, (int)y-h));
                 if(game.p.arrhythmia){
                     game.scorekeeper.addPoints(10);
@@ -42,6 +46,10 @@ public class ArrhSyringe extends Draggable{
                 essential=false;
             }
             dx=dy=0;
+        }
+        if(x>180 && x<230 && y<35){
+            alive=false;
+            game.destroy.play();
         }
     }
     

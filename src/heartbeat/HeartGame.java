@@ -23,25 +23,27 @@ import java.util.logging.Logger;
  */
 public class HeartGame extends GameLoop{
     Sprite bodyHitbox, patientSkin, patientHair, patientClothes, patientEyes,
-     heart, fontBlack, fontWhite, syringe, iv, scope, table, logo, background, title,
+     heart, fontBlack, fontWhite, fontTutorial, syringe, iv, scope, table, logo, background, title,
             clear, checkMark, cursor, trash;
     Logo logoAnim;
-    
+    Achievement achievement;
     Button back;
     HighscoreTable highscores;
     Menu menu;
     BeatController beat;
-    Sound music, normal, fast, slow, tapeStop;
+    Sound music, normal, fast, slow, tapeStop, destroy, cpr, beep, hiss;
     ArrayList<Button> buttons;
     Patient p;
     PulseAnimation pulse;
     ArrayList<Draggable> items;
     ArrayList<Feedback> feedback;
-    boolean dragging, canClick, click;
-    int prevFPS;
+    boolean dragging, canClick, click, cursorVisible;
+    int prevFPS, prevMouseX;
     Scorekeeper scorekeeper;
     ClearAnimation clearAnimation;
-    int state, duration;
+    Stethoscope stethoscope;
+    Tutorial tutorial;
+    int state, duration, buttonOffset;
     public static final int STATE_GAME=2;
     public static final int STATE_FEEDBACK=3;
     public static final int STATE_SCORES=4;
@@ -69,6 +71,7 @@ public class HeartGame extends GameLoop{
             heart=new Sprite("artwork/heartbeat_strip8.png",-1);
             fontBlack=new Sprite("artwork/12x8FontFixed.png",94);
             fontWhite=new Sprite("artwork/12x8FontWhite.png",94);
+            fontTutorial=new Sprite("artwork/tutorial_font.png",94);
             syringe=new Sprite("artwork/syringe_strip7.png",-1);
             clear=new Sprite("artwork/clear.png", -1);
             checkMark=new Sprite("artwork/feedback_strip2.png", -1);
@@ -76,14 +79,20 @@ public class HeartGame extends GameLoop{
             cursor=new Sprite("artwork/cursor.png", -1);
             trash=new Sprite("artwork/wastebasket.png", -1);
             
-            normal=new Sound("normal2.wav");
-            fast=new Sound("fast.wav");
-            slow=new Sound("slow2.wav");
-            tapeStop=new Sound("tapestop.wav");
+            normal=new Sound("sounds/normal2.wav");
+            fast=new Sound("sounds/fast.wav");
+            slow=new Sound("sounds/slow2.wav");
+            tapeStop=new Sound("sounds/tapestop.wav");
+            beep=new Sound("sounds/beep.wav");
+            destroy=new Sound("sounds/trash.wav");
+            hiss=new Sound("sounds/destroy2.wav");
+            cpr=new Sound("sounds/normal2.wav");
             
             this.setCursorSprite(null);
             back=new Button(this, "Back", 220, 140, 80, 16, 2);
             highscores=new HighscoreTable();
+            achievement=new Achievement(this);
+            
             resetGame();
             
         } catch (IOException ex) {
@@ -124,6 +133,7 @@ public class HeartGame extends GameLoop{
         if(state==STATE_GAME)gameUpdate();
         
         if(state==STATE_MENU){
+            if(prevMouseX!=mouseX)cursorVisible=true;
             menu.update();
             if(menu.done()){
                 if(menu.nextState==STATE_GAME){
@@ -131,13 +141,26 @@ public class HeartGame extends GameLoop{
                 }
                 state=menu.nextState;
             }
+            
+            int n=beat.getBeat()/8;
+            if(n>duration){
+                playTune(1+(int)(Math.random()*4));
+            }
         }
         if(state==STATE_SCORES || state==STATE_CREDITS){
             if(back.clicked())returnToMenu();
         }
+        prevMouseX=mouseX;
     }
     
     public void gameUpdate(){
+        if(dragging&&buttonOffset<100){
+            buttonOffset++;
+        }
+        else{
+            buttonOffset-=3;
+            if(buttonOffset<0)buttonOffset=0;
+        }
         int n=beat.getBeat()/8;
         if(n>duration){
             state=STATE_FEEDBACK;
@@ -151,8 +174,10 @@ public class HeartGame extends GameLoop{
         while(l.hasNext()){
             Draggable d=(Draggable)l.next();
             d.update();
-            if(!d.essential && (d.x<-50 || d.x>width+50 || d.y<-50 || d.y>height+50))l.remove();
+            if(!d.alive)l.remove();
+            else if(!d.essential && (d.x<-50 || d.x>width+50 || d.y<-50 || d.y>height+50))l.remove();
         }
+        stethoscope.update();
         for(Button b:buttons){
             if(b.clicked()){
                 switch(b.id){
@@ -180,7 +205,30 @@ public class HeartGame extends GameLoop{
             if(logoAnim.done()){
                 pulse.render();
                 int b=beat.getBeat()/8;
-                drawText(beat.getBeat()/8+" ",fontWhite,0,0);
+                int b2=b/4;
+                String msg="";
+                switch(b2){
+                    case 2:
+                        msg="Jesuit High School presents...";
+                        break;
+                    case 3:
+                        msg="Peter Cowal";
+                        break;
+                    case 4:
+                        msg="Dean Santos";
+                        break;
+                    case 5:
+                        msg="Maya Cansdale";
+                        break;
+                    case 6:
+                        msg="Cruz Barnum";
+                        break;
+                    case 7:
+                        msg="Launching in "+(32-b)+"...";
+                        break;
+                        
+                }
+                drawText(msg, fontWhite, 8, 160);
                 if(b==31){
                     blendMode=BM_DIFFERENCE;
                     this.drawRectangle(0, 0, width, height, 0xFFFFFFFF, false);
@@ -213,12 +261,15 @@ public class HeartGame extends GameLoop{
             drawSprite(trash, 0, 180, 0);
             
             p.render();
-            blur((int)(600*p.heartOpacity));
-            p.renderHeart();
             for(Draggable d:items){
                 d.render();
             }
+            blur((int)(600*p.heartOpacity));
+            p.renderHeart();
+            stethoscope.render();
+            
             for(Button b:buttons){
+                b.xOffset=quad(0);
                 b.render();
             }
             ListIterator l=feedback.listIterator();
@@ -235,9 +286,11 @@ public class HeartGame extends GameLoop{
             else{
                 clearAnimation.time=0;
             }
+            
+            tutorial.render();
         }
-        
-        if(state!=STATE_INTRO){
+        achievement.render();
+        if(state!=STATE_INTRO && cursorVisible){
             blendMode=BM_DIFFERENCE;
             drawSprite(cursor, 0, mouseX, mouseY);
             blendMode=BM_NORMAL;
@@ -252,6 +305,7 @@ public class HeartGame extends GameLoop{
     }
     public void resetGame(){
         
+        
         items=new ArrayList<Draggable>();
         buttons=new ArrayList<Button>();
         feedback=new ArrayList<Feedback>();
@@ -261,8 +315,11 @@ public class HeartGame extends GameLoop{
         buttons.add(new Button(this, "Bradycardia", 200,120,113,18, 2));
         buttons.add(new Button(this, "Atrial Fib.", 200,140,113,18, 3));
         p=new Patient(this);
-
-        items.add(new Stethoscope(this));
+        
+        tutorial=new Tutorial(this);
+        
+        stethoscope=new Stethoscope(this);
+        
         this.backgroundColor=0xFF000000;
         scorekeeper=new Scorekeeper(this);
         dragging=false;
@@ -279,6 +336,7 @@ public class HeartGame extends GameLoop{
         else{
             playTune(4);
         }
+        buttonOffset=0;
     }
     public void blur(int amt){
         if(amt>127){
@@ -381,5 +439,10 @@ public class HeartGame extends GameLoop{
     @Override
     public void mouseWheelRotated(int i) {
         
+    }
+    
+    public int quad(int offset){
+        int q=Math.max(buttonOffset-offset, 0);
+        return (q*q)/9;
     }
 }
