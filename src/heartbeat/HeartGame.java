@@ -263,7 +263,7 @@ public class HeartGame extends GameLoop{
                     + "Cruz Barnum '18\n"
                     + "  Programming, Artwork\n"
                     + "Dean Santos '18\n"
-                    + "  Design, Artwork\n"
+                    + "  Design, Fonts, Sound\n"
                     + "Maya Cansdale '18\n"
                     + "  Artwork", fontBlack, 4, 4);
             
