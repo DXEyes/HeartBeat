@@ -31,7 +31,7 @@ public class HeartGame extends GameLoop{
     HighscoreTable highscores;
     Menu menu;
     BeatController beat;
-    Sound music, normal, fast, slow;
+    Sound music, normal, fast, slow, tapeStop;
     ArrayList<Button> buttons;
     Patient p;
     PulseAnimation pulse;
@@ -79,6 +79,7 @@ public class HeartGame extends GameLoop{
             normal=new Sound("normal2.wav");
             fast=new Sound("fast.wav");
             slow=new Sound("slow2.wav");
+            tapeStop=new Sound("tapestop.wav");
             
             this.setCursorSprite(null);
             back=new Button(this, "Back", 220, 140, 80, 16, 2);
@@ -251,29 +252,33 @@ public class HeartGame extends GameLoop{
     }
     public void resetGame(){
         
-            
-            items=new ArrayList<Draggable>();
-            buttons=new ArrayList<Button>();
-            feedback=new ArrayList<Feedback>();
-            pulse=new PulseAnimation(this, 140,60);
-            buttons.add(new Button(this, "Stable!", 200,80,113,18, 0));
-            buttons.add(new Button(this, "Tachycardia", 200,100,113,18, 1));
-            buttons.add(new Button(this, "Bradycardia", 200,120,113,18, 2));
-            buttons.add(new Button(this, "Atrial Fib.", 200,140,113,18, 3));
-            p=new Patient(this);
-            
-            items.add(new Stethoscope(this));
-            this.backgroundColor=0xFF000000;
-            scorekeeper=new Scorekeeper(this);
-            dragging=false;
-            
-            clearAnimation=new ClearAnimation(this);
-            logoAnim=new Logo(this);
-            
-            state=STATE_INTRO;
-            
-            menu=new Menu(this);
+        items=new ArrayList<Draggable>();
+        buttons=new ArrayList<Button>();
+        feedback=new ArrayList<Feedback>();
+        pulse=new PulseAnimation(this, 140,60);
+        buttons.add(new Button(this, "Stable!", 200,80,113,18, 0));
+        buttons.add(new Button(this, "Tachycardia", 200,100,113,18, 1));
+        buttons.add(new Button(this, "Bradycardia", 200,120,113,18, 2));
+        buttons.add(new Button(this, "Atrial Fib.", 200,140,113,18, 3));
+        p=new Patient(this);
+
+        items.add(new Stethoscope(this));
+        this.backgroundColor=0xFF000000;
+        scorekeeper=new Scorekeeper(this);
+        dragging=false;
+
+        clearAnimation=new ClearAnimation(this);
+        logoAnim=new Logo(this);
+
+        state=STATE_INTRO;
+
+        menu=new Menu(this);
+        if(Math.random()>0.5){
             playTune(3);
+        }
+        else{
+            playTune(4);
+        }
     }
     public void blur(int amt){
         if(amt>127){

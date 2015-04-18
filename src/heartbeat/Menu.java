@@ -31,20 +31,23 @@ public class Menu {
         if(active && menuTimer>0)--menuTimer;
         else ++menuTimer;
         
-        if(start.clicked()){
-            nextState=HeartGame.STATE_GAME;
-            active=false;
-            game.music.stop();
-        }
-        if(scores.clicked()){
-            nextState=HeartGame.STATE_SCORES;
-            active=false;
-        }
-        if(credits.clicked()){
-            nextState=HeartGame.STATE_CREDITS;
-            active=false;
-        }
+        if(active){
+            if(start.clicked()){
+                nextState=HeartGame.STATE_GAME;
+                active=false;
+                game.music.stop();
+                game.tapeStop.play();
+            }
+            if(scores.clicked()){
+                nextState=HeartGame.STATE_SCORES;
+                active=false;
+            }
+            if(credits.clicked()){
+                nextState=HeartGame.STATE_CREDITS;
+                active=false;
+            }
         if(exit.clicked())System.exit(0);
+        }
     }
     public boolean done(){
         return menuTimer>80;

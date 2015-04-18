@@ -21,6 +21,8 @@ public class Scorekeeper {
     double combo, maxCombo;
     int scoreDisplay;
     int patientCount, patientsTreated;
+    
+    double prevX, prevY;
     Signature signature;
     Button menuButton;
     int t;
@@ -74,7 +76,21 @@ public class Scorekeeper {
                 + "Rank: "+rank, game.fontBlack, 42, 4);
         
         game.drawText("Sign below", game.fontBlack, 42, 120);
-        if(game.mbPressed[MouseEvent.BUTTON1])signature.edit(game.mouseX-42, game.mouseY-140);
+        if(game.mbPressed[MouseEvent.BUTTON1]){
+            if(game.click){
+                prevX=game.mouseX;
+                prevY=game.mouseY;
+            }
+            for(double i=0; i<=1; i+=.125){
+                double xx=prevX*i+(double)game.mouseX*(1-i);
+                double yy=prevY*i+(double)game.mouseY*(1-i);
+                signature.edit((int)xx-42, (int)yy-140);
+                
+            }
+            prevX=game.mouseX;
+            prevY=game.mouseY;
+            
+        }
         signature.render(game, 42, 140);
         if(signature.edited){
             menuButton.render();
