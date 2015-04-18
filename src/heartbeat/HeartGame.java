@@ -24,9 +24,10 @@ import java.util.logging.Logger;
 public class HeartGame extends GameLoop{
     Sprite bodyHitbox, patientSkin, patientHair, patientClothes, patientEyes,
      heart, fontBlack, fontWhite, syringe, iv, scope, table, logo, background, title,
-            clear, checkMark;
+            clear, checkMark, cursor, trash;
     Logo logoAnim;
     
+    Button back;
     HighscoreTable highscores;
     Menu menu;
     BeatController beat;
@@ -43,6 +44,8 @@ public class HeartGame extends GameLoop{
     int state, duration;
     public static final int STATE_GAME=2;
     public static final int STATE_FEEDBACK=3;
+    public static final int STATE_SCORES=4;
+    public static final int STATE_CREDITS=5;
     public static final int STATE_MENU=1;
     public static final int STATE_INTRO=0;
     Cable c;
@@ -70,14 +73,18 @@ public class HeartGame extends GameLoop{
             clear=new Sprite("artwork/clear.png", -1);
             checkMark=new Sprite("artwork/feedback_strip2.png", -1);
             iv=new Sprite("artwork/iv_strip4.png", -1);
+            cursor=new Sprite("artwork/cursor.png", -1);
+            trash=new Sprite("artwork/wastebasket.png", -1);
             
             normal=new Sound("normal2.wav");
             fast=new Sound("fast.wav");
             slow=new Sound("slow2.wav");
             
+            this.setCursorSprite(null);
+            back=new Button(this, "Back", 220, 140, 80, 16, 2);
+            highscores=new HighscoreTable();
             resetGame();
-            state=STATE_GAME;
-            duration=32;
+            
         } catch (IOException ex) {
             Logger.getLogger(HeartGame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -100,7 +107,10 @@ public class HeartGame extends GameLoop{
             if(mbPressed[MouseEvent.BUTTON1]){
                 click=true;
                 canClick=false;
-                if(state==STATE_INTRO)state=STATE_MENU;
+                if(state==STATE_INTRO){
+                    click=false;
+                    state=STATE_MENU;
+                }
             }
         }
         else{
@@ -115,9 +125,14 @@ public class HeartGame extends GameLoop{
         if(state==STATE_MENU){
             menu.update();
             if(menu.done()){
-                playTune(1+(int)(Math.random()*4));
-                state=STATE_GAME;
+                if(menu.nextState==STATE_GAME){
+                    playTune(1+(int)(Math.random()*4));
+                }
+                state=menu.nextState;
             }
+        }
+        if(state==STATE_SCORES || state==STATE_CREDITS){
+            if(back.clicked())returnToMenu();
         }
     }
     
@@ -176,13 +191,26 @@ public class HeartGame extends GameLoop{
             }
         }
         if(state==STATE_MENU){
+            ScrollingBackground.render(this);
             menu.render();
         }
+        if(state==STATE_SCORES){
+            ScrollingBackground.render(this);
+            highscores.render(this);
+            back.render();
+        }
+        if(state==STATE_CREDITS){
+            ScrollingBackground.render(this);
+            back.render();
+        }
         if(state==STATE_FEEDBACK){
+            ScrollingBackground.render(this);
             scorekeeper.renderFinal();
         }
         if(state==STATE_GAME){
             drawSprite(background, 0, 0, 0);
+            drawSprite(trash, 0, 180, 0);
+            
             p.render();
             blur((int)(600*p.heartOpacity));
             p.renderHeart();
@@ -207,12 +235,22 @@ public class HeartGame extends GameLoop{
                 clearAnimation.time=0;
             }
         }
+        
+        if(state!=STATE_INTRO){
+            blendMode=BM_DIFFERENCE;
+            drawSprite(cursor, 0, mouseX, mouseY);
+            blendMode=BM_NORMAL;
+        }
         //this.drawText("Hello World!", font, 100, 20);
         //this.drawText("The quick brown fox", font, 100, 80);
         
     }
+    public void returnToMenu(){
+        menu=new Menu(this);
+        state=STATE_MENU;
+    }
     public void resetGame(){
-        highscores=new HighscoreTable();
+        
             
             items=new ArrayList<Draggable>();
             buttons=new ArrayList<Button>();

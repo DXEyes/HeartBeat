@@ -14,10 +14,11 @@ public class Menu {
     int menuTimer, t;
     boolean active;
     Button start, exit, scores, credits;
+    int nextState;
     
     public Menu(HeartGame game){
         this.game=game;
-        menuTimer=60;
+        menuTimer=80;
         active=true;
         start=new Button(game, "START!!!", 79, 122, 80, 16, 1);
         scores=new Button(game, "Scores!", 161, 122, 80, 16, 2);
@@ -31,13 +32,22 @@ public class Menu {
         else ++menuTimer;
         
         if(start.clicked()){
+            nextState=HeartGame.STATE_GAME;
             active=false;
             game.music.stop();
+        }
+        if(scores.clicked()){
+            nextState=HeartGame.STATE_SCORES;
+            active=false;
+        }
+        if(credits.clicked()){
+            nextState=HeartGame.STATE_CREDITS;
+            active=false;
         }
         if(exit.clicked())System.exit(0);
     }
     public boolean done(){
-        return menuTimer>60;
+        return menuTimer>80;
     }
     public int quad(int offset){
         int q=Math.max(menuTimer-offset, 0);
@@ -46,8 +56,6 @@ public class Menu {
     
     public void render(){
         
-        game.drawSprite(game.background, 0, t%320, 0);
-        game.drawSprite(game.background, 0, t%320-320, 0);
         game.pulse.render();
         
         int to=quad(40);

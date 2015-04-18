@@ -22,7 +22,7 @@ public class HighscoreTable implements Serializable{
         int y=10;
         for(HighscoreEntry h:entries){
             h.signature.render(game, 10, y);
-            game.drawText(h.grade +"   "+h.score, game.fontBlack, 100, y);
+            game.drawText(h.grade +"   "+h.score, game.fontBlack, 130, y+1);
             y+=30;
             if(y>180)break;
         }
@@ -46,6 +46,6 @@ class HighscoreEntry implements Comparable, Serializable{
     @Override
     public int compareTo(Object t) {
         HighscoreEntry h=(HighscoreEntry) t;
-        return (score-h.score);
+        return (h.score-score);
     }
 }

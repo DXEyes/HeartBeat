@@ -30,6 +30,8 @@ public class Patient {
     public static final int STATUS_STOPPED=2;
     
     
+    
+    
     boolean exiting;
     
     double heartOpacity;
@@ -37,6 +39,7 @@ public class Patient {
     Sprite heart, body;
     int x;
     int cprCount;
+    int id;
     public Patient(HeartGame game){
         
         this.game=game;
@@ -71,6 +74,7 @@ public class Patient {
         if(Math.random()<0.3)arrhythmia=true;
         if(Math.random()<0.2)heartStatus=STATUS_STOPPED;
         nextStatus=heartStatus;
+        id++;
         
     }
     public void changeStatus(int status, int time){
@@ -84,11 +88,13 @@ public class Patient {
             game.scorekeeper.patientsTreated++;
             game.scorekeeper.addPoints(100);
             game.scorekeeper.increaseCombo(1);
+            game.feedback.add(new Feedback(game, true));
         }
         else{
             game.scorekeeper.patientCount++;
             if(heartStatus==STATUS_STOPPED)game.scorekeeper.resetCombo();
             else game.scorekeeper.halveCombo();
+            game.feedback.add(new Feedback(game, false));
         }
         exiting=true;
     }

@@ -7,6 +7,9 @@ package heartbeat;
 
 import gamebase.GameLoop;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -49,8 +52,6 @@ public class Scorekeeper {
     }
     
     public void renderFinal(){
-        game.drawSprite(game.background, 0, t%320, 0);
-        game.drawSprite(game.background, 0, t%320-320, 0);
         
         t++;
         //draw a sheet of paper
@@ -79,6 +80,11 @@ public class Scorekeeper {
             menuButton.render();
             if(menuButton.clicked()){
                 game.highscores.addEntry(signature, score, rank);
+                try {
+                    SerializationUtil.serialize(game.highscores, "highscores.hbh");
+                } catch (IOException ex) {
+                    //Logger.getLogger(Scorekeeper.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 game.resetGame();
             }
         }

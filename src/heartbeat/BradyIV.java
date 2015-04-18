@@ -14,11 +14,13 @@ import gamebase.Sprite;
 public class BradyIV extends Draggable{
     Cable cable;
     int count;
+    int patientID;
     public BradyIV(HeartGame game) {
         super(game, game.iv, 120+(int)(Math.random()*50), -50+(int)(Math.random()*50));
         cable=new Cable(game, x, y, 200, 0xFF202020);
         cable.setStart(x, y, -200);
         cable.setEnd(x+w, y-h, 0);
+        patientID=-1;
     }
 
     @Override
@@ -34,10 +36,17 @@ public class BradyIV extends Draggable{
                 count-=3;
                 if(count%100<3)game.scorekeeper.addPoints(5);
                 
+                if(patientID<0)patientID=game.p.id;
+                else if(patientID!=game.p.id){
+                    patientID=game.p.id;
+                    game.scorekeeper.halveCombo();
+                    game.feedback.add(new Feedback(game, "Shared Needle :(", (int)x, (int)y));
+                }
             }
             else if(c==Patient.ARM_HITBOX){
                 if(subimg<3)subimg++;
                 count--;
+                if(patientID<0)patientID=game.p.id;
             }
             else{
                 subimg=0;
