@@ -255,6 +255,18 @@ public class HeartGame extends GameLoop{
         if(state==STATE_CREDITS){
             ScrollingBackground.render(this);
             back.render();
+            
+            this.drawText2("HeartBeat HERO, v1.0\n"
+                    + "\n"
+                    + "Peter Cowal '15\n"
+                    + "  Programming, Design, Music\n"
+                    + "Cruz Barnum '18\n"
+                    + "  Programming, Artwork\n"
+                    + "Dean Santos '18\n"
+                    + "  Design, Artwork\n"
+                    + "Maya Cansdale '18\n"
+                    + "  Artwork", fontBlack, 4, 4);
+            
         }
         if(state==STATE_FEEDBACK){
             ScrollingBackground.render(this);
